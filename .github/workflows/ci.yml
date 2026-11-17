@@ -1,0 +1,32 @@
+name: C++ testleri
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  correctness:
+    name: Ders ve ek testler (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Derle, test et ve hazır ders kodunun korunduğunu doğrula
+        run: make test
+      - name: Tek dosyalı teslimi doğrula
+        run: make submission
+
+  sanitizers:
+    name: Bellek kontrolü
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: AddressSanitizer ve UndefinedBehaviorSanitizer
+        run: make sanitize
